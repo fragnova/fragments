@@ -8,3 +8,5 @@ authors = ['Fragcolor <https://github.com/fragcolor-xyz>']
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+scale-info = { version = "1.0", features = ["derive"] }
+parity-scale-codec = { version = "2.3" }
