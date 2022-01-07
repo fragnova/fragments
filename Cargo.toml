@@ -1,0 +1,10 @@
+[package]
+name = "fragments"
+version = "0.1.0"
+edition = "2021"
+license = 'BUSL-1.1'
+authors = ['Fragcolor <https://github.com/fragcolor-xyz>']
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
