@@ -50,7 +50,7 @@ pub enum FragmentData {
 
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub struct FragmentMetadata {
-  pub name: String,
+  pub name: Vec<u8>,
 }
 
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
@@ -86,7 +86,7 @@ fn test_encode_decode_fragment() {
     text: "hello world".to_string().into_bytes(),
   });
   let metadata = FragmentMetadata {
-    name: "test".to_string(),
+    name: "test".to_string().into_bytes(),
   };
   let fragment = Fragment { metadata, data };
   let encoded = fragment.encode();
