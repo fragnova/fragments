@@ -10,8 +10,8 @@ description = "Fragments is a library for building and managing fragments assets
 
 [dependencies]
 scale-info = { version = "1.0", features = ["derive"] }
-parity-scale-codec = { version = "2.3" }
+parity-scale-codec = { version = "2.3", default-features = false, features = ["derive"] }
 
 [features]
 default = ["std"]
-std = []
+std = ["parity-scale-codec/std"]
