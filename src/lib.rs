@@ -1,8 +1,24 @@
 /* SPDX-License-Identifier: BUSL-1.1 */
 /* Copyright © 2022 Fragcolor Pte. Ltd. */
 
+#[cfg(not(feature = "std"))]
+#[doc(hidden)]
+pub extern crate alloc;
+
+#[cfg(feature = "std")]
+#[doc(hidden)]
+pub mod alloc {
+	pub use std::boxed;
+	pub use std::vec;
+	pub use std::string;
+	pub use std::borrow;
+	pub use std::collections;
+	pub use std::sync;
+	pub use std::rc;
+}
+
 use parity_scale_codec::{Decode, Encode};
-use std::collections::btree_map::BTreeMap;
+use crate::alloc::collections::btree_map::BTreeMap;
 
 /// list of compatible formats
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
