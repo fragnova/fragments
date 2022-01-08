@@ -20,7 +20,10 @@ pub mod alloc {
 use crate::alloc::{collections::btree_map::BTreeMap, vec::Vec};
 use parity_scale_codec::{Decode, Encode};
 
-/// list of compatible formats
+#[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
+pub struct FragmentHash([u8; 32]);
+
+// list of compatible formats
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub enum AudioFormats {
   Ogg,
@@ -29,8 +32,20 @@ pub enum AudioFormats {
 }
 
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
+pub enum ImageFormats {
+  Jpeg,
+  Png,
+}
+
+#[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub struct AudioData {
   pub format: AudioFormats,
+  pub data: Vec<u8>,
+}
+
+#[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
+pub struct ImageData {
+  pub format: ImageFormats,
   pub data: Vec<u8>,
 }
 
@@ -43,14 +58,24 @@ pub struct EdnData {
 pub enum FragmentData {
   Edn(EdnData),
   Audio(AudioData),
-  /// Nested types
+  Image(ImageData),
+  // Nested types
   Sequence(Vec<FragmentData>),
   Table(BTreeMap<Vec<u8>, FragmentData>),
 }
 
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
+pub enum FragmentPreview {
+  None,
+  Image(FragmentHash),
+}
+
+#[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub struct FragmentMetadata {
   pub name: Vec<u8>,
+  pub description: Vec<u8>,
+  pub attributes: BTreeMap<Vec<u8>, Vec<u8>>,
+  pub preview: FragmentPreview
 }
 
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
@@ -87,6 +112,9 @@ fn test_encode_decode_fragment() {
   });
   let metadata = FragmentMetadata {
     name: "test".to_string().into_bytes(),
+    description: "test".to_string().into_bytes(),
+    attributes: BTreeMap::new(),
+    preview: FragmentPreview::None,
   };
   let fragment = Fragment { metadata, data };
   let encoded = fragment.encode();
@@ -127,6 +155,17 @@ fn test_encode_decode_fragment_table() {
       }),
     ),
   ]));
+  let encoded = data.encode();
+  let decoded = FragmentData::decode(&mut &encoded[..]).unwrap();
+  assert_eq!(data, decoded);
+}
+
+#[test]
+fn test_encode_decode_fragment_image() {
+  let data = FragmentData::Image(ImageData {
+    format: ImageFormats::Jpeg,
+    data: vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  });
   let encoded = data.encode();
   let decoded = FragmentData::decode(&mut &encoded[..]).unwrap();
   assert_eq!(data, decoded);
