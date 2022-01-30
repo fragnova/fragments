@@ -20,10 +20,12 @@ pub mod alloc {
 use crate::alloc::{collections::btree_map::BTreeMap, vec::Vec};
 use parity_scale_codec::{Decode, Encode};
 
+#[repr(C)]
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub struct FragmentHash([u8; 32]);
 
 // list of compatible formats
+#[repr(C)]
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub enum AudioFormats {
   Ogg,
@@ -31,29 +33,35 @@ pub enum AudioFormats {
   Wav,
 }
 
+#[repr(C)]
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub enum ImageFormats {
   Jpeg,
   Png,
 }
 
+#[repr(C)]
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub struct AudioData {
   pub format: AudioFormats,
   pub data: Vec<u8>,
 }
 
+#[repr(C)]
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub struct ImageData {
   pub format: ImageFormats,
   pub data: Vec<u8>,
 }
 
+#[repr(C)]
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub struct EdnData {
   pub text: Vec<u8>,
 }
 
+// refer to https://github.com/rust-lang/rfcs/blob/master/text/2195-really-tagged-unions.md
+#[repr(u8)]
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub enum FragmentData {
   Edn(EdnData),
@@ -64,12 +72,14 @@ pub enum FragmentData {
   Table(BTreeMap<Vec<u8>, FragmentData>),
 }
 
+#[repr(u8)]
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub enum FragmentPreview {
   None,
   Image(FragmentHash),
 }
 
+#[repr(C)]
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub struct FragmentMetadata {
   pub name: Vec<u8>,
@@ -78,6 +88,7 @@ pub struct FragmentMetadata {
   pub preview: FragmentPreview
 }
 
+#[repr(C)]
 #[derive(Encode, Decode, Clone, scale_info::TypeInfo, PartialEq, Debug, Eq)]
 pub struct Fragment {
   pub metadata: FragmentMetadata,
